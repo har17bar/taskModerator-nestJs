@@ -24,8 +24,7 @@ export class TasksController {
     private readonly logger = new Logger(TasksController.name);
 
     @Get()
-    getTasks(@Query() filterDto: GetTasksFilterDto): Task[] {
-        this.logger.log(JSON.stringify( filterDto));
+    getTasks(@Query(ValidationPipe) filterDto: GetTasksFilterDto): Task[] {
         if (Object.keys(filterDto).length){
            return this.tasksService.getTasksWithFilters(filterDto)
         } else {
