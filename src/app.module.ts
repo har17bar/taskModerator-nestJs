@@ -1,9 +1,15 @@
 import { Module } from '@nestjs/common';
-import { TasksModule } from './tasks/tasks.module';
-
+import { NotesModule } from './notes/notes.module';
+import { MongooseModule } from '@nestjs/mongoose';
 
 @Module({
-  imports: [TasksModule],
-  providers: [],
+  imports: [
+    MongooseModule.forRoot('mongodb://localhost/nest', {
+      useNewUrlParser: true,
+      useUnifiedTopology: true
+    }),
+    NotesModule
+  ],
+  providers: []
 })
 export class AppModule {}
