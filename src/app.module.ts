@@ -6,8 +6,8 @@ import { AuthModule } from './auth/auth.module';
 @Module({
   imports: [
     MongooseModule.forRoot('mongodb://localhost/nest', {
+      useCreateIndex: true,
       useNewUrlParser: true,
-      useUnifiedTopology: true
     }),
     NotesModule,
     AuthModule

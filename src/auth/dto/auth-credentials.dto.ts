@@ -11,4 +11,5 @@ export class AuthCredentialsDto {
     message: 'Password too weak'
   })
   password: string;
+  salt: string;
 }
