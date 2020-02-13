@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { NotesModule } from './notes/notes.module';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -8,7 +9,8 @@ import { MongooseModule } from '@nestjs/mongoose';
       useNewUrlParser: true,
       useUnifiedTopology: true
     }),
-    NotesModule
+    NotesModule,
+    AuthModule
   ],
   providers: []
 })
