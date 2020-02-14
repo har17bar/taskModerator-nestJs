@@ -1,17 +1,10 @@
-import {
-  Body,
-  Controller,
-  HttpException,
-  Post,
-  Req,
-  UseFilters,
-  UseGuards,
-  ValidationPipe
-} from '@nestjs/common';
+import { Body, Controller, Post, ValidationPipe } from '@nestjs/common';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import { AuthService } from './auth.service';
-import { HttpExceptionFilter } from '../http-exception.filter';
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger';
+import { JwtPayload } from './auth.model';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
@@ -21,14 +14,15 @@ export class AuthController {
     return this.authService.signUp(authCredentialsDto);
   }
 
-  // @Post('/signin')
-  // signIn(@Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto): Promise<{ accessToken: string }> {
-  //     return this.authService.signIn(authCredentialsDto);
-  // }
-
-  // @Post('/test')
-  // @UseGuards(AuthGuard())
-  // test(@Req() req) {
-  //     console.log(req);
-  // }
+  @ApiOkResponse({
+    status: 200,
+    description: 'The jwt token',
+    type: JwtPayload
+  })
+  @Post('/signin')
+  async signIn(
+    @Body(ValidationPipe) authCredentialsDto: AuthCredentialsDto
+  ): Promise<JwtPayload> {
+    return this.authService.signIn(authCredentialsDto);
+  }
 }

@@ -9,6 +9,8 @@ import { CreateNotesDto } from './dto/create-notes.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
+import { GetUser } from '../auth/get-user.decorator';
+import { IUsers } from '../auth/auth.model';
 
 @Injectable()
 export class NotesService {
@@ -43,8 +45,14 @@ export class NotesService {
     return notes;
   }
 
-  async createNote(createNotesDto: CreateNotesDto): Promise<INotes> {
-    const createdCat = new this.notesModel(createNotesDto);
+  async createNote(
+    createNotesDto: CreateNotesDto,
+    user: IUsers
+  ): Promise<INotes> {
+    const createdCat = new this.notesModel({
+      ...createNotesDto,
+      created_by: user._id
+    });
     return createdCat.save();
   }
 

@@ -1,8 +1,12 @@
-import { Document, Schema } from 'mongoose';
+import { Document, Schema, Types } from 'mongoose';
 
 export const NotesSchema = new Schema({
   title: String,
-  description: String
+  description: String,
+  created_by: {
+    type: Types.ObjectId,
+    ref: 'User'
+  }
 });
 
 // export enum TaskStatus {

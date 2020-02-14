@@ -2,18 +2,20 @@ import {
   Injectable,
   ConflictException,
   InternalServerErrorException,
-  UseFilters
+  UnauthorizedException
 } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
-import { IUsers } from './user.model';
+import { JwtPayload, IUsers } from './auth.model';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectModel('Users') private readonly usersModel: Model<IUsers>
+    @InjectModel('Users') private readonly usersModel: Model<IUsers>,
+    private jwtService: JwtService
   ) {}
 
   async signUp(authCredentialsDto: AuthCredentialsDto) {
@@ -36,6 +38,30 @@ export class AuthService {
       }
     }
   }
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<JwtPayload> {
+    return this.validateUserPassword(authCredentialsDto);
+  }
+
+  async validateUserPassword(
+    authCredentialsDto: AuthCredentialsDto
+  ): Promise<JwtPayload> {
+    const { userName, password } = authCredentialsDto;
+    const user: IUsers = await this.usersModel.findOne({ userName });
+    if (user && (await this.validatePassword(password, user))) {
+      const accessToken = this.jwtService.sign({
+        userName: user.userName,
+        _id: user._id
+      });
+      return { accessToken };
+    }
+    throw new UnauthorizedException('Invalid credentials');
+  }
+
+  async validatePassword(password, user) {
+    const hash = await bcrypt.hash(password, user.salt);
+    return hash === user.password;
+  }
+
   private async hashPassword(password: string, salt: string): Promise<string> {
     return bcrypt.hash(password, salt);
   }
