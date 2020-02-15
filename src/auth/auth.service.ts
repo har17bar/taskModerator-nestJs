@@ -5,7 +5,8 @@ import {
   UnauthorizedException
 } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
-import { JwtPayload, IUsers } from './auth.model';
+import { IUsers } from './auth.model';
+import { JwtPayloadDto } from './dto/jwt-payload';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
 import * as bcrypt from 'bcrypt';
@@ -38,13 +39,13 @@ export class AuthService {
       }
     }
   }
-  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<JwtPayload> {
+  async signIn(authCredentialsDto: AuthCredentialsDto): Promise<JwtPayloadDto> {
     return this.validateUserPassword(authCredentialsDto);
   }
 
   async validateUserPassword(
     authCredentialsDto: AuthCredentialsDto
-  ): Promise<JwtPayload> {
+  ): Promise<JwtPayloadDto> {
     const { userName, password } = authCredentialsDto;
     const user: IUsers = await this.usersModel.findOne({ userName });
     if (user && (await this.validatePassword(password, user))) {

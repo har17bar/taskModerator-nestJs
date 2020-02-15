@@ -19,5 +19,5 @@ export interface INotes extends Document {
   _id: string;
   title: string;
   description: string;
-  // created_by: string;
+  created_by: string;
 }

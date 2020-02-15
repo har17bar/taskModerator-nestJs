@@ -43,13 +43,10 @@ export class NotesController {
     type: [CreateNotesDto]
   })
   async getNotes(
-    @Query(ValidationPipe) filterDto: GetNotesFilterDto
+    @Query(ValidationPipe) filterDto: GetNotesFilterDto,
+    @GetUser() user: IUsers
   ): Promise<INotes[]> {
-    if (Object.keys(filterDto).length) {
-      return this.notesService.getNotesWithFilters(filterDto);
-    } else {
-      return this.notesService.getNotes();
-    }
+    return this.notesService.getNotes(filterDto, user);
   }
 
   @ApiResponse({
@@ -58,8 +55,11 @@ export class NotesController {
     type: CreateNotesDto
   })
   @Get('/:id')
-  async getNoteById(@Param('id') id: string): Promise<INotes> {
-    return this.notesService.getNoteById(id);
+  async getNoteById(
+    @Param('id') id: string,
+    @GetUser() user: IUsers
+  ): Promise<INotes> {
+    return this.notesService.getNoteById(id, user);
   }
 
   @Post()

@@ -1,4 +1,6 @@
 import { Document, Schema } from 'mongoose';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsNotEmpty } from 'class-validator';
 
 export const UsersSchema = new Schema({
   userName: {
@@ -19,8 +21,4 @@ export interface IUsers extends Document {
   password: string;
   salt: string;
   // created_by: string;
-}
-
-export class JwtPayload {
-  accessToken: string;
 }

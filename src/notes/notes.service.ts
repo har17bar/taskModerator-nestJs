@@ -18,31 +18,32 @@ export class NotesService {
     @InjectModel('Notes') private readonly notesModel: Model<INotes>
   ) {}
 
-  async getNotes(): Promise<INotes[]> {
-    return this.notesModel.find().exec();
+  async getNotes(
+    filterDto: GetNotesFilterDto,
+    user: IUsers
+  ): Promise<INotes[]> {
+    const { search } = filterDto;
+    console.log(search, 'search');
+    return this.notesModel
+      .find({
+        title: /^search/,
+        description: new RegExp(search, 'i'),
+        created_by: user._id
+      })
+      .exec();
   }
 
-  async getNoteById(id: string): Promise<INotes> {
-    const found = await this.notesModel.findOne(Types.ObjectId(id));
+  async getNoteById(id: string, user: IUsers): Promise<INotes> {
+    const found = await this.notesModel.findOne({
+      created_by: user._id,
+      _id: Types.ObjectId(id)
+    });
 
     if (!found) {
       throw new NotFoundException(`Note with ID '${id}' not found`);
     }
 
     return found;
-  }
-
-  async getNotesWithFilters(filterDto: GetNotesFilterDto): Promise<INotes[]> {
-    const { search } = filterDto;
-    let notes = await this.getNotes();
-
-    if (search) {
-      notes = notes.filter(note => {
-        return note.title.includes(search) || note.description.includes(search);
-      });
-    }
-
-    return notes;
   }
 
   async createNote(
