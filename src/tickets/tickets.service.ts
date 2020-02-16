@@ -29,8 +29,7 @@ export class TicketsService {
       owner: user._id,
       status: TicketStatus.NEW
     });
-    console.log(createTicketDto, 'createTicketDto__');
-    console.log(createdTicket, 'createdTicket');
+
     try {
       return createdTicket.save();
     } catch (error) {
