@@ -2,7 +2,8 @@ import {
   Injectable,
   ConflictException,
   InternalServerErrorException,
-  UnauthorizedException
+  UnauthorizedException,
+  Logger
 } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { IUsers } from './auth.model';
@@ -14,6 +15,7 @@ import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
   constructor(
     @InjectModel('Users') private readonly usersModel: Model<IUsers>,
     private jwtService: JwtService
@@ -49,10 +51,14 @@ export class AuthService {
     const { userName, password } = authCredentialsDto;
     const user: IUsers = await this.usersModel.findOne({ userName });
     if (user && (await this.validatePassword(password, user))) {
-      const accessToken = this.jwtService.sign({
+      const payload = {
         userName: user.userName,
         _id: user._id
-      });
+      };
+      const accessToken = this.jwtService.sign(payload);
+      this.logger.debug(
+        `Genereted JWT Token with payload ${JSON.stringify(payload)}`
+      );
       return { accessToken };
     }
     throw new UnauthorizedException('Invalid credentials');

@@ -8,8 +8,11 @@ import {
 } from '@nestjs/common';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
+import { log } from 'util';
 
 async function bootstrap() {
+  const logger = new Logger('bootstrap');
+
   const app = await NestFactory.create(AppModule);
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(
@@ -28,8 +31,10 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
+  const port = 3000;
   SwaggerModule.setup('/docs', app, document);
-  await app.listen(3000);
+  await app.listen(port);
+  logger.log(`Application listening on port ${port}`);
 }
 
 bootstrap().then(r => undefined);

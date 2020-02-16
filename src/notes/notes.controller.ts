@@ -46,6 +46,11 @@ export class NotesController {
     @Query(ValidationPipe) filterDto: GetNotesFilterDto,
     @GetUser() user: IUsers
   ): Promise<INotes[]> {
+    this.logger.verbose(
+      `User "${
+        user.userName
+      }" retrieving all notes. FilterDto: ${JSON.stringify(filterDto)}`
+    );
     return this.notesService.getNotes(filterDto, user);
   }
 
@@ -72,6 +77,11 @@ export class NotesController {
     @Body() createNotesDto: CreateNotesDto,
     @GetUser() user: IUsers
   ): Promise<INotes> {
+    this.logger.verbose(
+      `User "${user.userName}" creating a new note. Data: ${JSON.stringify(
+        createNotesDto
+      )}`
+    );
     return this.notesService.createNote(createNotesDto, user);
   }
 

@@ -1,6 +1,8 @@
 import {
   BadRequestException,
   Injectable,
+  InternalServerErrorException,
+  Logger,
   NotFoundException
 } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
@@ -14,6 +16,8 @@ import { IUsers } from '../auth/auth.model';
 
 @Injectable()
 export class NotesService {
+  private readonly logger = new Logger(NotesService.name);
+
   constructor(
     @InjectModel('Notes') private readonly notesModel: Model<INotes>
   ) {}
@@ -27,7 +31,18 @@ export class NotesService {
     if (search) {
       query = { ...query, $or: [{ title: search }, { description: search }] };
     }
-    return this.notesModel.find(query).exec();
+
+    try {
+      return this.notesModel.find(query).exec();
+    } catch (error) {
+      this.logger.error(
+        `Failed to get notes for user " ${
+          user.userName
+        } " DTO: ${JSON.stringify(filterDto)}`,
+        error.stack
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async getNoteById(id: string, user: IUsers): Promise<INotes> {
@@ -51,7 +66,18 @@ export class NotesService {
       ...createNotesDto,
       created_by: user._id
     });
-    return createdCat.save();
+
+    try {
+      return createdCat.save();
+    } catch (error) {
+      this.logger.error(
+        `Failed to crate note for user " ${
+          user.userName
+        } ". Data: ${JSON.stringify(createNotesDto)} `,
+        error.stack
+      );
+      throw new InternalServerErrorException();
+    }
   }
 
   async deleteNote(id: string, user: IUsers): Promise<boolean> {
