@@ -23,14 +23,11 @@ export class NotesService {
     user: IUsers
   ): Promise<INotes[]> {
     const { search } = filterDto;
-    console.log(search, 'search');
-    return this.notesModel
-      .find({
-        title: /^search/,
-        description: new RegExp(search, 'i'),
-        created_by: user._id
-      })
-      .exec();
+    let query: object = { created_by: user._id };
+    if (search) {
+      query = { ...query, $or: [{ title: search }, { description: search }] };
+    }
+    return this.notesModel.find(query).exec();
   }
 
   async getNoteById(id: string, user: IUsers): Promise<INotes> {
@@ -57,20 +54,26 @@ export class NotesService {
     return createdCat.save();
   }
 
-  async deleteNote(id: string): Promise<boolean> {
+  async deleteNote(id: string, user: IUsers): Promise<boolean> {
     const res = await this.notesModel
-      .deleteOne({ _id: Types.ObjectId(id) })
+      .deleteOne({
+        created_by: user._id,
+        _id: Types.ObjectId(id)
+      })
       .exec();
     return Boolean(res.n);
   }
 
-  async updateNote(id: string, updateNotesDto: UpdateNotesDto) {
+  async updateNote(id: string, user: IUsers, updateNotesDto: UpdateNotesDto) {
     if (updateNotesDto.description || updateNotesDto.title) {
-      return this.notesModel.findOneAndUpdate(
-        { _id: Types.ObjectId(id) },
+      const updatedResult = await this.notesModel.findOneAndUpdate(
+        { created_by: user._id, _id: Types.ObjectId(id) },
         updateNotesDto,
         { new: true }
       );
+      if (updatedResult) {
+        return updatedResult;
+      }
     }
     throw new BadRequestException();
   }

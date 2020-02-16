@@ -76,16 +76,20 @@ export class NotesController {
   }
 
   @Delete('/:id')
-  async deleteNote(@Param('id') id: string): Promise<boolean> {
-    return this.notesService.deleteNote(id);
+  async deleteNote(
+    @Param('id') id: string,
+    @GetUser() user: IUsers
+  ): Promise<boolean> {
+    return this.notesService.deleteNote(id, user);
   }
 
   @Put('/:id')
-  updateTasksStatus(
+  async updateTasksStatus(
     @Param('id') id: string,
-    @Body() updateNotesDto: UpdateNotesDto
+    @Body() updateNotesDto: UpdateNotesDto,
+    @GetUser() user: IUsers
   ) {
-    return this.notesService.updateNote(id, updateNotesDto);
+    return this.notesService.updateNote(id, user, updateNotesDto);
   }
 
   // @Patch('/:id/status')
