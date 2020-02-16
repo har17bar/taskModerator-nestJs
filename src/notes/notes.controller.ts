@@ -7,13 +7,12 @@ import {
   Query,
   Delete,
   Logger,
-  UsePipes,
   Controller,
   ValidationPipe,
   UseGuards
 } from '@nestjs/common';
 import { NotesService } from './notes.service';
-import { INotes } from './notes.model';
+import { INote } from './notes.model';
 import { CreateNotesDto } from './dto/create-notes.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
@@ -26,7 +25,7 @@ import {
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
-import { IUsers } from '../auth/auth.model';
+import { IUser } from '../auth/auth.model';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -44,8 +43,8 @@ export class NotesController {
   })
   async getNotes(
     @Query(ValidationPipe) filterDto: GetNotesFilterDto,
-    @GetUser() user: IUsers
-  ): Promise<INotes[]> {
+    @GetUser() user: IUser
+  ): Promise<CreateNotesDto[]> {
     this.logger.verbose(
       `User "${
         user.userName
@@ -62,8 +61,8 @@ export class NotesController {
   @Get('/:id')
   async getNoteById(
     @Param('id') id: string,
-    @GetUser() user: IUsers
-  ): Promise<INotes> {
+    @GetUser() user: IUser
+  ): Promise<INote> {
     return this.notesService.getNoteById(id, user);
   }
 
@@ -72,11 +71,10 @@ export class NotesController {
     description: 'The record has been successfully created.',
     type: CreateNotesDto
   })
-  @UsePipes(ValidationPipe)
   async createNote(
     @Body() createNotesDto: CreateNotesDto,
-    @GetUser() user: IUsers
-  ): Promise<INotes> {
+    @GetUser() user: IUser
+  ): Promise<INote> {
     this.logger.verbose(
       `User "${user.userName}" creating a new note. Data: ${JSON.stringify(
         createNotesDto
@@ -88,7 +86,7 @@ export class NotesController {
   @Delete('/:id')
   async deleteNote(
     @Param('id') id: string,
-    @GetUser() user: IUsers
+    @GetUser() user: IUser
   ): Promise<boolean> {
     return this.notesService.deleteNote(id, user);
   }
@@ -97,7 +95,7 @@ export class NotesController {
   async updateTasksStatus(
     @Param('id') id: string,
     @Body() updateNotesDto: UpdateNotesDto,
-    @GetUser() user: IUsers
+    @GetUser() user: IUser
   ) {
     return this.notesService.updateNote(id, user, updateNotesDto);
   }
@@ -106,7 +104,7 @@ export class NotesController {
   // updateTasksStatus(
   //   @Param('id') id: string,
   //   @Body('status', TaskStatusValidationPipe) status: TaskStatus
-  // ): INotes {
+  // ): INote {
   //   return this.tasksService.updateTasksStatus(id, status);
   // }
 }

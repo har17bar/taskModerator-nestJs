@@ -5,17 +5,11 @@ export const NotesSchema = new Schema({
   description: String,
   created_by: {
     type: Types.ObjectId,
-    ref: 'User'
+    ref: 'Users'
   }
 });
 
-// export enum TaskStatus {
-//   OPEN = 'OPEN',
-//   IN_PROGRESS = 'IN_PROGRESS',
-//   DONE = 'DONE'
-// }
-
-export interface INotes extends Document {
+export interface INote extends Document {
   _id: string;
   title: string;
   description: string;

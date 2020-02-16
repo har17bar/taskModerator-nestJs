@@ -6,26 +6,22 @@ import {
   NotFoundException
 } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
-import { INotes } from './notes.model';
+import { INote } from './notes.model';
 import { CreateNotesDto } from './dto/create-notes.dto';
 import { UpdateNotesDto } from './dto/update-notes.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
-import { GetUser } from '../auth/get-user.decorator';
-import { IUsers } from '../auth/auth.model';
+import { IUser } from '../auth/auth.model';
 
 @Injectable()
 export class NotesService {
   private readonly logger = new Logger(NotesService.name);
 
   constructor(
-    @InjectModel('Notes') private readonly notesModel: Model<INotes>
+    @InjectModel('Notes') private readonly notesModel: Model<INote>
   ) {}
 
-  async getNotes(
-    filterDto: GetNotesFilterDto,
-    user: IUsers
-  ): Promise<INotes[]> {
+  async getNotes(filterDto: GetNotesFilterDto, user: IUser): Promise<INote[]> {
     const { search } = filterDto;
     let query: object = { created_by: user._id };
     if (search) {
@@ -45,7 +41,7 @@ export class NotesService {
     }
   }
 
-  async getNoteById(id: string, user: IUsers): Promise<INotes> {
+  async getNoteById(id: string, user: IUser): Promise<INote> {
     const found = await this.notesModel.findOne({
       created_by: user._id,
       _id: Types.ObjectId(id)
@@ -60,8 +56,8 @@ export class NotesService {
 
   async createNote(
     createNotesDto: CreateNotesDto,
-    user: IUsers
-  ): Promise<INotes> {
+    user: IUser
+  ): Promise<INote> {
     const createdCat = new this.notesModel({
       ...createNotesDto,
       created_by: user._id
@@ -80,7 +76,7 @@ export class NotesService {
     }
   }
 
-  async deleteNote(id: string, user: IUsers): Promise<boolean> {
+  async deleteNote(id: string, user: IUser): Promise<boolean> {
     const res = await this.notesModel
       .deleteOne({
         created_by: user._id,
@@ -90,7 +86,7 @@ export class NotesService {
     return Boolean(res.n);
   }
 
-  async updateNote(id: string, user: IUsers, updateNotesDto: UpdateNotesDto) {
+  async updateNote(id: string, user: IUser, updateNotesDto: UpdateNotesDto) {
     if (updateNotesDto.description || updateNotesDto.title) {
       const updatedResult = await this.notesModel.findOneAndUpdate(
         { created_by: user._id, _id: Types.ObjectId(id) },

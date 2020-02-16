@@ -1,8 +1,8 @@
 import { createParamDecorator } from '@nestjs/common';
-import { IUsers } from './auth.model';
+import { IUser } from './auth.model';
 
 export const GetUser = createParamDecorator(
-  (data, req): IUsers => {
+  (data, req): IUser => {
     return req.user;
   }
 );

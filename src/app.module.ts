@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { NotesModule } from './notes/notes.module';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
+import { TicketsModule } from './tickets/tickets.module';
 import * as config from 'config';
 
 const dbConfig = config.get('db');
@@ -16,7 +17,8 @@ const DbDatabaseName = process.env.DB_DATABASENAME || dbConfig.databaseName;
       useNewUrlParser: true
     }),
     NotesModule,
-    AuthModule
+    AuthModule,
+    TicketsModule
   ],
   providers: []
 })

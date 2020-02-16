@@ -9,6 +9,7 @@ import { NotesSchema } from './notes.model';
     MongooseModule.forFeature([{ name: 'Notes', schema: NotesSchema }])
   ],
   controllers: [NotesController],
-  providers: [NotesService]
+  providers: [NotesService],
+  exports: [NotesService]
 })
 export class NotesModule {}

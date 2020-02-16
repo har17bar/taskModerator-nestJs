@@ -5,8 +5,8 @@ import {
   UnauthorizedException,
   Logger
 } from '@nestjs/common';
-import { Model, Types } from 'mongoose';
-import { IUsers } from './auth.model';
+import { Model } from 'mongoose';
+import { IUser } from './auth.model';
 import { JwtPayloadDto } from './dto/jwt-payload';
 import { InjectModel } from '@nestjs/mongoose';
 import { AuthCredentialsDto } from './dto/auth-credentials.dto';
@@ -17,7 +17,7 @@ import { JwtService } from '@nestjs/jwt';
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   constructor(
-    @InjectModel('Users') private readonly usersModel: Model<IUsers>,
+    @InjectModel('Users') private readonly usersModel: Model<IUser>,
     private jwtService: JwtService
   ) {}
 
@@ -49,7 +49,7 @@ export class AuthService {
     authCredentialsDto: AuthCredentialsDto
   ): Promise<JwtPayloadDto> {
     const { userName, password } = authCredentialsDto;
-    const user: IUsers = await this.usersModel.findOne({ userName });
+    const user: IUser = await this.usersModel.findOne({ userName });
     if (user && (await this.validatePassword(password, user))) {
       const payload = {
         userName: user.userName,
