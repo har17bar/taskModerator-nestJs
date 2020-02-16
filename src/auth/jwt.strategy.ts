@@ -4,6 +4,10 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { IUsers } from './auth.model';
+import * as config from 'config';
+
+const jwtConfig = config.get('jwt');
+const JwtSecret = process.env.JWT_SECRET || jwtConfig.secret;
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -13,7 +17,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: 'secret'
+      secretOrKey: JwtSecret
     });
   }
 

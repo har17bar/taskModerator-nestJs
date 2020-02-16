@@ -1,0 +1,6 @@
+db:
+  host: 'mongodb://localhost'
+  username: 'mongo'
+  password: 'mongo'
+jwt:
+  secret: 'secret '

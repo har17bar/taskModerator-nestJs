@@ -1,19 +1,20 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import {
-  BadRequestException,
-  Logger,
-  ValidationError,
-  ValidationPipe
-} from '@nestjs/common';
+import { Logger, ValidationPipe } from '@nestjs/common';
 import { HttpExceptionFilter } from './http-exception.filter';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { log } from 'util';
+import * as config from 'config';
 
 async function bootstrap() {
-  const logger = new Logger('bootstrap');
+  const serverConfig = config.get('server');
 
+  const logger = new Logger('bootstrap');
   const app = await NestFactory.create(AppModule);
+
+  if (process.env.NODE_ENV === 'development') {
+    app.enableCors();
+  }
+
   app.useGlobalFilters(new HttpExceptionFilter());
   app.useGlobalPipes(
     new ValidationPipe()
@@ -31,7 +32,8 @@ async function bootstrap() {
     .addBearerAuth()
     .build();
   const document = SwaggerModule.createDocument(app, options);
-  const port = 3000;
+
+  const port = process.env.PORT || serverConfig.port;
   SwaggerModule.setup('/docs', app, document);
   await app.listen(port);
   logger.log(`Application listening on port ${port}`);
