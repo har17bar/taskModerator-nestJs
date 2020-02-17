@@ -13,19 +13,19 @@ import {
 } from '@nestjs/common';
 import { NotesService } from './notes.service';
 import { INote } from './notes.model';
-import { CreateNotesDto } from './dto/create-notes.dto';
+import { CreateNoteDto } from './dto/create-note.dto';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
-import { UpdateNotesDto } from './dto/update-notes.dto';
+import { UpdateNoteDto } from './dto/update-note.dto';
 import {
   ApiBearerAuth,
-  ApiCreatedResponse,
   ApiOkResponse,
-  ApiResponse,
+  ApiOperation,
   ApiTags
 } from '@nestjs/swagger';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { IUser } from '../auth/auth.model';
+import { DeleteNoteDto } from './dto/delete-note.dto';
 
 @ApiBearerAuth()
 @UseGuards(AuthGuard('jwt'))
@@ -39,12 +39,12 @@ export class NotesController {
   @ApiOkResponse({
     status: 200,
     description: 'The found records',
-    type: [CreateNotesDto]
+    type: [CreateNoteDto]
   })
   async getNotes(
     @Query(ValidationPipe) filterDto: GetNotesFilterDto,
     @GetUser() user: IUser
-  ): Promise<CreateNotesDto[]> {
+  ): Promise<CreateNoteDto[]> {
     this.logger.verbose(
       `User "${
         user.userName
@@ -53,10 +53,10 @@ export class NotesController {
     return this.notesService.getNotes(filterDto, user);
   }
 
-  @ApiResponse({
+  @ApiOkResponse({
     status: 200,
     description: 'The found record',
-    type: CreateNotesDto
+    type: CreateNoteDto
   })
   @Get('/:id')
   async getNoteById(
@@ -67,12 +67,12 @@ export class NotesController {
   }
 
   @Post()
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'The record has been successfully created.',
-    type: CreateNotesDto
+    type: CreateNoteDto
   })
   async createNote(
-    @Body() createNotesDto: CreateNotesDto,
+    @Body() createNotesDto: CreateNoteDto,
     @GetUser() user: IUser
   ): Promise<INote> {
     this.logger.verbose(
@@ -83,18 +83,25 @@ export class NotesController {
     return this.notesService.createNote(createNotesDto, user);
   }
 
+  @ApiOkResponse({
+    schema: {
+      type: 'boolean',
+      example: true
+    }
+  })
   @Delete('/:id')
   async deleteNote(
-    @Param('id') id: string,
+    @Param() deleteNoteDto: DeleteNoteDto,
     @GetUser() user: IUser
   ): Promise<boolean> {
-    return this.notesService.deleteNote(id, user);
+    return this.notesService.deleteNote(deleteNoteDto.id, user);
   }
 
+  @ApiOperation({ summary: 'Update note' })
   @Put('/:id')
-  async updateTasksStatus(
+  async updateNote(
     @Param('id') id: string,
-    @Body() updateNotesDto: UpdateNotesDto,
+    @Body() updateNotesDto: UpdateNoteDto,
     @GetUser() user: IUser
   ) {
     return this.notesService.updateNote(id, user, updateNotesDto);

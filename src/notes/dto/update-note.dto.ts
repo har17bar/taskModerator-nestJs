@@ -1,7 +1,7 @@
 import { IsNotEmpty, IsOptional } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UpdateNotesDto {
+export class UpdateNoteDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsOptional()

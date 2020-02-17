@@ -7,8 +7,8 @@ import {
 } from '@nestjs/common';
 import { Model, Types } from 'mongoose';
 import { INote } from './notes.model';
-import { CreateNotesDto } from './dto/create-notes.dto';
-import { UpdateNotesDto } from './dto/update-notes.dto';
+import { CreateNoteDto } from './dto/create-note.dto';
+import { UpdateNoteDto } from './dto/update-note.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { GetNotesFilterDto } from './dto/get-notes-filter.dto';
 import { IUser } from '../auth/auth.model';
@@ -54,10 +54,7 @@ export class NotesService {
     return found;
   }
 
-  async createNote(
-    createNotesDto: CreateNotesDto,
-    user: IUser
-  ): Promise<INote> {
+  async createNote(createNotesDto: CreateNoteDto, user: IUser): Promise<INote> {
     const createdCat = new this.notesModel({
       ...createNotesDto,
       created_by: user._id
@@ -86,7 +83,7 @@ export class NotesService {
     return Boolean(res.n);
   }
 
-  async updateNote(id: string, user: IUser, updateNotesDto: UpdateNotesDto) {
+  async updateNote(id: string, user: IUser, updateNotesDto: UpdateNoteDto) {
     if (updateNotesDto.description || updateNotesDto.title) {
       const updatedResult = await this.notesModel.findOneAndUpdate(
         { created_by: user._id, _id: Types.ObjectId(id) },

@@ -1,6 +1,5 @@
 import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
-import { NotesService } from '../notes/notes.service';
-import { ApiBearerAuth, ApiCreatedResponse, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../auth/get-user.decorator';
 import { IUser } from '../auth/auth.model';
 import { CreateTicketDto } from './dto/create-ticket.dto';
@@ -16,11 +15,11 @@ export class TicketsController {
   constructor(private readonly ticketServe: TicketsService) {}
 
   @Post()
-  @ApiCreatedResponse({
+  @ApiOkResponse({
     description: 'The record has been successfully created.',
     type: CreateTicketDto
   })
-  async createNote(
+  async createTicket(
     @Body() createTicketDto: CreateTicketDto,
     @GetUser() user: IUser
   ): Promise<any> {
