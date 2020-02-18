@@ -4,6 +4,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AuthModule } from './auth/auth.module';
 import { TicketsModule } from './tickets/tickets.module';
 import * as config from 'config';
+import { register } from '../plugin/register';
 
 const dbConfig = config.get('db');
 const DbHost = process.env.DB_HOSTENAME || dbConfig.host;
@@ -18,7 +19,8 @@ const DbDatabaseName = process.env.DB_DATABASENAME || dbConfig.databaseName;
     }),
     NotesModule,
     AuthModule,
-    TicketsModule
+    TicketsModule,
+    register[0].register()
   ],
   providers: []
 })

@@ -9,7 +9,9 @@
     "ordered-imports": false,
     "interface-name": false,
     "semicolon": [true, "always"],
-    "quotemark": [true, "single"]
+    "quotemark": [true, "single"],
+    "no-submodule-imports": false,
+    "no-implicit-dependencies": false
   },
   "rulesDirectory": []
 }

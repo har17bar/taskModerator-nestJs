@@ -19,11 +19,8 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Get('/signup')
-  async signUp(@Res() res: Response) {
-    res.render('index', {
-      message: 'Hello world!'
-    });
-    // return this.authService.signUp(authCredentialsDto);
+  async signUp(authCredentialsDto: AuthCredentialsDto) {
+    return this.authService.signUp(authCredentialsDto);
   }
 
   @ApiOkResponse({
