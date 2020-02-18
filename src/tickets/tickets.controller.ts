@@ -1,13 +1,21 @@
-import { Body, Controller, Logger, Post, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Logger,
+  Post,
+  Res,
+  UseGuards
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiTags } from '@nestjs/swagger';
 import { GetUser } from '../auth/get-user.decorator';
 import { IUser } from '../auth/auth.model';
 import { CreateTicketDto } from './dto/create-ticket.dto';
 import { TicketsService } from './tickets.service';
 import { AuthGuard } from '@nestjs/passport';
+import { Response } from 'express';
 
 @ApiBearerAuth()
-@UseGuards(AuthGuard('jwt'))
 @ApiTags('Tickets')
 @Controller('tickets')
 export class TicketsController {

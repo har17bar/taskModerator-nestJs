@@ -9,8 +9,8 @@ export class NewEntityController {
 
   @Get()
   async createNewEntity(@Res() res: Response) {
-    res.render('index', {
-      message: 'Hello world!'
+    res.render('newEntity', {
+      menus: ['Hello world!']
     });
   }
 }
